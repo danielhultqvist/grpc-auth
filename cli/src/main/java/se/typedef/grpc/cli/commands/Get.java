@@ -1,19 +1,16 @@
-package se.typedef.grpc.commands;
+package se.typedef.grpc.cli.commands;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
-import se.typedef.grpc.BlogPostServiceGrpc;
-import se.typedef.grpc.Cli;
+import se.typedef.grpc.cli.Cli;
 import se.typedef.grpc.GetPostRequest;
 import se.typedef.grpc.GetPostResponse;
 
-@Command(name = "get", description = "Get existing post")
+@Command(name = "get", description = "get existing post")
 public class Get implements Runnable {
 
   @ParentCommand private Cli cli;
@@ -21,11 +18,11 @@ public class Get implements Runnable {
   @Option(
     names = {"-id", "--id"},
     required = true,
-    description = "Id of post to get"
+    description = "id of post to get"
   )
   private long id;
 
-  @Option(names = "--help", usageHelp = true, description = "Shows this help test")
+  @Option(names = "--help", usageHelp = true, description = "display this help and exit")
   boolean help;
 
   @Override

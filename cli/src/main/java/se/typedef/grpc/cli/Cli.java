@@ -1,41 +1,44 @@
-package se.typedef.grpc;
+package se.typedef.grpc.cli;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import picocli.CommandLine;
-import se.typedef.grpc.commands.Delete;
-import se.typedef.grpc.commands.Get;
-import se.typedef.grpc.commands.Put;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import se.typedef.grpc.BlogPostServiceGrpc;
+import se.typedef.grpc.cli.commands.Delete;
+import se.typedef.grpc.cli.commands.Get;
+import se.typedef.grpc.cli.commands.Put;
 
 @SuppressWarnings("FieldCanBeLocal")
-@CommandLine.Command(
+@Command(
   name = "cli",
   subcommands = {Delete.class, Get.class, Put.class}
 )
 public class Cli implements Runnable {
 
-  @CommandLine.Option(
+  @Option(
     names = {"-h", "--host"},
     description = "gRPC server host. Default: localhost",
     type = String.class
   )
   private String host = "localhost";
 
-  @CommandLine.Option(
+  @Option(
     names = {"-p", "--p"},
     description = "gRPC server port. Default: 8080",
     type = int.class
   )
   private int port = 8080;
 
-  @CommandLine.Option(
+  @Option(
     names = "--help",
     usageHelp = true,
     description = "display this help and exit"
   )
   private boolean help;
 
-  @CommandLine.Option(
+  @Option(
     names = {"-u", "--user"},
     required = true,
     description = "Required: username for authentication"
@@ -53,9 +56,9 @@ public class Cli implements Runnable {
 
   public BlogPostServiceGrpc.BlogPostServiceBlockingStub service() {
     final ManagedChannel channel =
-        ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
+      ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
 
     return BlogPostServiceGrpc.newBlockingStub(channel)
-        .withCallCredentials(Authentication.create(user));
+      .withCallCredentials(Authentication.create(user));
   }
 }

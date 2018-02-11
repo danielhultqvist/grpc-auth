@@ -50,7 +50,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>se.typedef.grpc.Cli</mainClass>
+                  <mainClass>se.typedef.grpc.cli.Cli</mainClass>
                 </transformer>
               </transformers>
             </configuration>

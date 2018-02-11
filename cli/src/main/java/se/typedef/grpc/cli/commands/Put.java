@@ -1,19 +1,16 @@
-package se.typedef.grpc.commands;
+package se.typedef.grpc.cli.commands;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
-import se.typedef.grpc.BlogPostServiceGrpc;
-import se.typedef.grpc.Cli;
+import se.typedef.grpc.cli.Cli;
 import se.typedef.grpc.PutPostRequest;
 import se.typedef.grpc.PutPostResponse;
 
-@Command(name = "put", description = "Add new post")
+@Command(name = "put", description = "add new post")
 public class Put implements Runnable {
 
   @ParentCommand private Cli cli;
@@ -21,18 +18,18 @@ public class Put implements Runnable {
   @Option(
     names = {"-author", "--author"},
     required = true,
-    description = "Author of post"
+    description = "author of post"
   )
   private String author;
 
   @Option(
     names = {"-text", "--text"},
     required = true,
-    description = "The post text"
+    description = "the post text"
   )
   private String text;
 
-  @Option(names = "--help", usageHelp = true, description = "Shows this help test")
+  @Option(names = "--help", usageHelp = true, description = "display this help and exit")
   boolean help;
 
   @Override

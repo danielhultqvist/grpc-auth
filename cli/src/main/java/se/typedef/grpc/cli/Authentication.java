@@ -1,4 +1,4 @@
-package se.typedef.grpc;
+package se.typedef.grpc.cli;
 
 import io.grpc.*;
 
@@ -26,7 +26,6 @@ public class Authentication implements CallCredentials {
       final Attributes attrs,
       final Executor appExecutor,
       final MetadataApplier applier) {
-
     appExecutor.execute(
         () -> {
           try {
@@ -40,5 +39,7 @@ public class Authentication implements CallCredentials {
   }
 
   @Override
-  public void thisUsesUnstableApi() {}
+  public void thisUsesUnstableApi() {
+    // well then Google, show me an alternative!
+  }
 }

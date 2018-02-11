@@ -1,16 +1,15 @@
-package se.typedef.grpc.commands;
+package se.typedef.grpc.cli.commands;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParentCommand;
 import se.typedef.grpc.*;
+import se.typedef.grpc.cli.Cli;
 
-@Command(name = "delete", description = "Add new post")
+@Command(name = "delete", description = "add new post")
 public class Delete implements Runnable {
 
   @ParentCommand private Cli cli;
@@ -18,11 +17,11 @@ public class Delete implements Runnable {
   @Option(
     names = {"-id", "--id"},
     required = true,
-    description = "Id of post to delete"
+    description = "id of post to delete"
   )
   private long id;
 
-  @Option(names = "--help", usageHelp = true, description = "Shows this help test")
+  @Option(names = "--help", usageHelp = true, description = "display this help and exit")
   boolean help;
 
   @Override
