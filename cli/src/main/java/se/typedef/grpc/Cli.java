@@ -33,7 +33,14 @@ public class Cli implements Runnable {
     usageHelp = true,
     description = "display this help and exit"
   )
-  boolean help;
+  private boolean help;
+
+  @CommandLine.Option(
+    names = {"-u", "--user"},
+    required = true,
+    description = "Required: username for authentication"
+  )
+  private String user;
 
   public static void main(final String[] args) {
     CommandLine.run(new Cli(), System.out, args);
@@ -47,6 +54,8 @@ public class Cli implements Runnable {
   public BlogPostServiceGrpc.BlogPostServiceBlockingStub service() {
     final ManagedChannel channel =
         ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
-    return BlogPostServiceGrpc.newBlockingStub(channel);
+
+    return BlogPostServiceGrpc.newBlockingStub(channel)
+        .withCallCredentials(Authentication.create(user));
   }
 }
