@@ -11,13 +11,13 @@ public class DummyAccessControl implements AccessControl {
 
   private static final Set<AccessRight> NO_RIGHTS = ImmutableSet.of();
   private static final Map<String, Set<AccessRight>> ACCESS_RIGHTS_BY_USER =
-    ImmutableMap.of(
-      "admin",
-      ImmutableSet.of(READ, WRITE, DELETE),
-      "editor",
-      ImmutableSet.of(READ, WRITE),
-      "reader",
-      ImmutableSet.of(READ));
+      ImmutableMap.of(
+          "admin",
+          ImmutableSet.of(READ, WRITE, DELETE),
+          "editor",
+          ImmutableSet.of(READ, WRITE),
+          "reader",
+          ImmutableSet.of(READ));
 
   private DummyAccessControl() {
     // no-op

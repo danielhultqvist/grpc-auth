@@ -31,11 +31,7 @@ public class Cli implements Runnable {
   )
   private int port = 8080;
 
-  @Option(
-    names = "--help",
-    usageHelp = true,
-    description = "display this help and exit"
-  )
+  @Option(names = "--help", usageHelp = true, description = "display this help and exit")
   private boolean help;
 
   @Option(
@@ -56,9 +52,9 @@ public class Cli implements Runnable {
 
   public BlogPostServiceGrpc.BlogPostServiceBlockingStub service() {
     final ManagedChannel channel =
-      ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
+        ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
 
     return BlogPostServiceGrpc.newBlockingStub(channel)
-      .withCallCredentials(Authentication.create(user));
+        .withCallCredentials(Authentication.create(user));
   }
 }

@@ -20,30 +20,30 @@ public class BlogPostService extends BlogPostServiceGrpc.BlogPostServiceImplBase
   @Override
   @Authorization(requires = AccessRight.READ)
   public void getPost(
-    final GetPostRequest request, final StreamObserver<GetPostResponse> responseObserver) {
+      final GetPostRequest request, final StreamObserver<GetPostResponse> responseObserver) {
     if (POSTS.containsKey(request.getId())) {
       final Post post = POSTS.get(request.getId());
       final GetPostResponse response =
-        GetPostResponse.newBuilder()
-          .setId(post.id)
-          .setAuthor(post.author)
-          .setText(post.text)
-          .build();
+          GetPostResponse.newBuilder()
+              .setId(post.id)
+              .setAuthor(post.author)
+              .setText(post.text)
+              .build();
 
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } else {
       responseObserver.onError(
-        new StatusRuntimeException(
-          Status.fromCode(Status.Code.INVALID_ARGUMENT)
-            .withDescription("No post with id " + request.getId())));
+          new StatusRuntimeException(
+              Status.fromCode(Status.Code.INVALID_ARGUMENT)
+                  .withDescription("No post with id " + request.getId())));
     }
   }
 
   @Override
   @Authorization(requires = AccessRight.WRITE)
   public void putPost(
-    final PutPostRequest request, final StreamObserver<PutPostResponse> responseObserver) {
+      final PutPostRequest request, final StreamObserver<PutPostResponse> responseObserver) {
     final long id = POST_COUNTER.getAndIncrement();
     POSTS.put(id, new Post(id, request.getAuthor(), request.getText()));
 
@@ -55,19 +55,19 @@ public class BlogPostService extends BlogPostServiceGrpc.BlogPostServiceImplBase
   @Override
   @Authorization(requires = AccessRight.DELETE)
   public void deletePost(
-    final DeletePostRequest request, final StreamObserver<DeletePostResponse> responseObserver) {
+      final DeletePostRequest request, final StreamObserver<DeletePostResponse> responseObserver) {
     if (POSTS.containsKey(request.getId())) {
       POSTS.remove(request.getId());
       final DeletePostResponse response =
-        DeletePostResponse.newBuilder().setId(request.getId()).build();
+          DeletePostResponse.newBuilder().setId(request.getId()).build();
 
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } else {
       responseObserver.onError(
-        new StatusRuntimeException(
-          Status.fromCode(Status.Code.INVALID_ARGUMENT)
-            .withDescription("No post with id " + request.getId())));
+          new StatusRuntimeException(
+              Status.fromCode(Status.Code.INVALID_ARGUMENT)
+                  .withDescription("No post with id " + request.getId())));
     }
   }
 }

@@ -4,7 +4,8 @@ This project demonstrates how to do gRPC authentication + annotation based autho
 If you have any suggestions for improvements, please feel free to make a PR.
 
 ## Overview
-These are the modules included in the project.
+These are the modules included in the project. Before you start looking at the code, please run
+```./mvnw package``` as the proto files needs to be compiled to Java.
 
 ### schema
 Contains proto files describing a gRPC service. The schema is compiled to Java using a Maven plugin (see pom.xml)
@@ -29,9 +30,9 @@ it does not affect performance during actual runtime.
 Simple CLI tool for communicating with the gRPC server. Outputs responses in JSON.
 
 #### Usage
-Start the `server` application in your editor or `java -jar server/target/server-0-SNAPSHOT.jar` (remember to `mvn package` first)
+Start the `server` application in your editor or `java -jar server/target/server-0-SNAPSHOT.jar` (remember to `./mvnw package` first)
 ```bash
-java -jar cli/target/cli-0-SNAPSHOT.jar --user editor put --author "Peter Pan" --text "I can fly!"
+java -jar cli/target/cli-0-SNAPSHOT.jar --user editor put --author "Peter Pan" --text "I can fly"
 
 java -jar cli/target/cli-0-SNAPSHOT.jar --user reader get --id 1
 ```

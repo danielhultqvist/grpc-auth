@@ -14,12 +14,12 @@ public class Main {
 
   public static void main(final String[] args) throws IOException, InterruptedException {
     final AuthenticationInterceptor authenticationInterceptor =
-      AuthenticationInterceptor.create(DummyAccessControl.create());
+        AuthenticationInterceptor.create(DummyAccessControl.create());
     final Server server =
-      ServerBuilder.forPort(PORT)
-        .addService(authenticationInterceptor.registerService(new BlogPostService()))
-        .intercept(authenticationInterceptor)
-        .build();
+        ServerBuilder.forPort(PORT)
+            .addService(authenticationInterceptor.registerService(new BlogPostService()))
+            .intercept(authenticationInterceptor)
+            .build();
 
     server.start();
     System.out.println("Started gRPC server at port " + PORT);

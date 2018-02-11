@@ -29,7 +29,7 @@ public class Get implements Runnable {
   public void run() {
     try {
       final GetPostResponse response =
-        cli.service().getPost(GetPostRequest.newBuilder().setId(id).build());
+          cli.service().getPost(GetPostRequest.newBuilder().setId(id).build());
       System.out.println(JsonFormat.printer().print(response));
     } catch (StatusRuntimeException e) {
       System.err.println(e.getMessage());
