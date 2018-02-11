@@ -1,40 +1,21 @@
 package se.typedef.grpc;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
+import se.typedef.grpc.commands.GetPost;
+import se.typedef.grpc.commands.PutPost;
+
+import java.util.List;
 
 public class Cli {
 
-  private static class GetPost {
-    static final String NAME = "get";
-
-    @Parameter(names = "--id", description = "Id of post", required = true)
-    private Long id;
-  }
-
-  private static class PutPost {
-    static final String NAME = "put";
-
-    @Parameter(names = "--author", description = "Author of the post", required = true)
-    private String author;
-
-    @Parameter(names = "--text", description = "Text for the post", required = true)
-    private String text;
-  }
-
   public static void main(final String[] args) {
-    final GetPost getParams = new GetPost();
-    final PutPost putParams = new PutPost();
+    final GlobalConfig globalConfig = new GlobalConfig();
     final JCommander jc =
         JCommander.newBuilder()
-            .addCommand(GetPost.NAME, getParams)
-            .addCommand(PutPost.NAME, putParams)
+            .addObject(globalConfig)
+            .addCommand(new GetPost())
+            .addCommand(new PutPost())
             .build();
 
     try {
@@ -49,55 +30,12 @@ public class Cli {
       return;
     }
 
-    switch (jc.getParsedCommand()) {
-      case GetPost.NAME:
-        getPost(getParams);
-        break;
-      case PutPost.NAME:
-        putPost(putParams);
-        break;
-      default:
-        System.out.println("Unknown command " + jc.getParsedCommand());
-    }
+    runCommand(jc, globalConfig);
   }
 
-  private static void getPost(final GetPost getParams) {
-    final ManagedChannel channel =
-        ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext(true).build();
-
-    final BlogPostServiceGrpc.BlogPostServiceBlockingStub service =
-        BlogPostServiceGrpc.newBlockingStub(channel);
-
-    try {
-      final GetPostResponse response =
-          service.getPost(GetPostRequest.newBuilder().setId(getParams.id).build());
-      System.out.println(JsonFormat.printer().print(response));
-    } catch (StatusRuntimeException e) {
-      System.err.println(e.getMessage());
-    } catch (InvalidProtocolBufferException e) {
-      throw new IllegalArgumentException(e);
-    }
-  }
-
-  private static void putPost(final PutPost putParams) {
-    final ManagedChannel channel =
-        ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext(true).build();
-
-    final BlogPostServiceGrpc.BlogPostServiceBlockingStub service =
-        BlogPostServiceGrpc.newBlockingStub(channel);
-
-    try {
-      final PutPostResponse response =
-          service.putPost(
-              PutPostRequest.newBuilder()
-                  .setAuthor(putParams.author)
-                  .setText(putParams.text)
-                  .build());
-      System.out.println(JsonFormat.printer().print(response));
-    } catch (StatusRuntimeException e) {
-      System.err.println(e.getMessage());
-    } catch (InvalidProtocolBufferException e) {
-      throw new IllegalArgumentException(e);
-    }
+  private static void runCommand(final JCommander jc, final GlobalConfig globalConfig) {
+    final List<Object> params = jc.getCommands().get(jc.getParsedCommand()).getObjects();
+    final Command command = (Command) params.get(0);
+    command.run(globalConfig);
   }
 }
