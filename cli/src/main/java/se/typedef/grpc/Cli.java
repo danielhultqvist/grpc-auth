@@ -1,41 +1,52 @@
 package se.typedef.grpc;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-import se.typedef.grpc.commands.GetPost;
-import se.typedef.grpc.commands.PutPost;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import picocli.CommandLine;
+import se.typedef.grpc.commands.Delete;
+import se.typedef.grpc.commands.Get;
+import se.typedef.grpc.commands.Put;
 
-import java.util.List;
+@SuppressWarnings("FieldCanBeLocal")
+@CommandLine.Command(
+  name = "cli",
+  subcommands = {Delete.class, Get.class, Put.class}
+)
+public class Cli implements Runnable {
 
-public class Cli {
+  @CommandLine.Option(
+    names = {"-h", "--host"},
+    description = "gRPC server host. Default: localhost",
+    type = String.class
+  )
+  private String host = "localhost";
+
+  @CommandLine.Option(
+    names = {"-p", "--p"},
+    description = "gRPC server port. Default: 8080",
+    type = int.class
+  )
+  private int port = 8080;
+
+  @CommandLine.Option(
+    names = "--help",
+    usageHelp = true,
+    description = "display this help and exit"
+  )
+  boolean help;
 
   public static void main(final String[] args) {
-    final GlobalConfig globalConfig = new GlobalConfig();
-    final JCommander jc =
-        JCommander.newBuilder()
-            .addObject(globalConfig)
-            .addCommand(new GetPost())
-            .addCommand(new PutPost())
-            .build();
-
-    try {
-      jc.parse(args);
-    } catch (ParameterException e) {
-      System.out.println(e.getMessage());
-      return;
-    }
-
-    if (jc.getParsedCommand() == null) {
-      System.out.println("Must specify command");
-      return;
-    }
-
-    runCommand(jc, globalConfig);
+    CommandLine.run(new Cli(), System.out, args);
   }
 
-  private static void runCommand(final JCommander jc, final GlobalConfig globalConfig) {
-    final List<Object> params = jc.getCommands().get(jc.getParsedCommand()).getObjects();
-    final Command command = (Command) params.get(0);
-    command.run(globalConfig);
+  @Override
+  public void run() {
+    System.out.println("Please specify a sub command");
+  }
+
+  public BlogPostServiceGrpc.BlogPostServiceBlockingStub service() {
+    final ManagedChannel channel =
+        ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
+    return BlogPostServiceGrpc.newBlockingStub(channel);
   }
 }
