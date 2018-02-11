@@ -15,7 +15,7 @@ public class AuthenticationInterceptor implements ServerInterceptor {
       Metadata.Key.of("user", ASCII_STRING_MARSHALLER);
 
   private static final ServerCall.Listener NOOP_LISTENER = new ServerCall.Listener() {};
-  private final Map<MethodDescriptor<?, ?>, Optional<AccessRight>> accessRightsRequiredByMethod =
+  private final Map<MethodDescriptor<?, ?>, Optional<AccessRight>> requiredAccessRightsByMethod =
       new HashMap<>();
   private final AccessControl accessControl;
 
@@ -33,8 +33,8 @@ public class AuthenticationInterceptor implements ServerInterceptor {
         .getMethods()
         .forEach(
             m -> {
-              accessRightsRequiredByMethod.put(
-                  m.getMethodDescriptor(), correspondingMethod(service, m));
+              requiredAccessRightsByMethod.put(
+                  m.getMethodDescriptor(), requiredAccessRightForMethod(service, m));
             });
 
     return service;
@@ -51,11 +51,11 @@ public class AuthenticationInterceptor implements ServerInterceptor {
       return NOOP_LISTENER;
     }
 
-    final Set<AccessRight> accessRightRights = accessControl.accessForUser(user);
+    final Set<AccessRight> userAccessRights = accessControl.accessForUser(user);
     final Optional<AccessRight> requiredAccessRight =
-        accessRightsRequiredByMethod.get(call.getMethodDescriptor());
+        requiredAccessRightsByMethod.get(call.getMethodDescriptor());
 
-    if (requiredAccessRight.isPresent() && !accessRightRights.contains(requiredAccessRight.get())) {
+    if (requiredAccessRight.isPresent() && !userAccessRights.contains(requiredAccessRight.get())) {
       call.close(
           Status.UNAUTHENTICATED.withDescription("User is not authorized for this endpoint"),
           headers);
@@ -65,7 +65,7 @@ public class AuthenticationInterceptor implements ServerInterceptor {
     return next.startCall(call, headers);
   }
 
-  private static Optional<AccessRight> correspondingMethod(
+  private static Optional<AccessRight> requiredAccessRightForMethod(
       final BindableService service, final ServerMethodDefinition<?, ?> methodDefinition) {
     final Method method =
         grpcMethodImplementation(service, methodName(methodDefinition.getMethodDescriptor()));

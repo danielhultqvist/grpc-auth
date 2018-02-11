@@ -25,7 +25,7 @@ public class Cli implements Runnable {
   private String host = "localhost";
 
   @Option(
-    names = {"-p", "--p"},
+    names = {"-p", "--port"},
     description = "gRPC server port. Default: 8080",
     type = int.class
   )
